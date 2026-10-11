@@ -54,7 +54,8 @@
     "test": "rm -rf dist-test && tsc -p tsconfig.test.json && node --test dist-test/test/chat.test.js dist-test/test/dom.test.js",
     "prepack": "npm run build",
     "prepublishOnly": "npm test",
-    "lint:package": "publint --strict && attw --pack . --exclude-entrypoints ./styles.css"
+    "lint:package": "publint --strict && attw --pack . --exclude-entrypoints ./styles.css",
+    "check:secrets": "node scripts/check-secrets.mjs --self-test"
   },
   "peerDependencies": {
     "react": "^18.3.1 || ^19.0.0"

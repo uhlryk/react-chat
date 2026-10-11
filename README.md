@@ -269,6 +269,7 @@ Every release is listed in [CHANGELOG.md](CHANGELOG.md).
 npm ci
 npm run typecheck && npm run lint && npm test   # tests render on the server and in happy-dom
 npm run build && npm run lint:package           # publint and attw on the packed package
+npm run build && npm run check:secrets          # no credential in a tracked or packed file
 npm run build && npx http-server .              # then open /example/
 ```
 

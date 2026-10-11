@@ -40,6 +40,8 @@ jobs:
             echo "CHANGELOG.md has no section for ${GITHUB_REF_NAME#v}"; exit 1
           fi
       - run: npm ci
+      - name: nothing that looks like a credential is tracked or packed
+        run: npm run build && npm run check:secrets
       # prepublishOnly runs the tests, prepack builds dist/
       # trusted publishing: npm exchanges the workflow's OIDC token, no secret
       - run: npm publish --provenance --access public
