@@ -109,5 +109,5 @@ The API is stable: from here, breaking changes come only in a new major version.
 [1.0.0]: https://github.com/uhlryk/react-chat/compare/v0.4.0...v1.0.0
 [0.4.0]: https://github.com/uhlryk/react-chat/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/uhlryk/react-chat/compare/v0.2.0...v0.3.0
-[0.2.0]: https://github.com/uhlryk/react-chat/compare/v0.1.0...v0.2.0
-[0.1.0]: https://github.com/uhlryk/react-chat/releases/tag/v0.1.0
+[0.2.0]: https://github.com/uhlryk/react-chat/compare/b45fc7f...v0.2.0
+[0.1.0]: https://www.npmjs.com/package/@krzysztofsztompka/react-chat/v/0.1.0

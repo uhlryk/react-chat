@@ -23,6 +23,7 @@ jobs:
       - run: npm run lint
       - run: npm run build
       - run: npm run lint:package
+      - run: npm run docs:check
       - run: npm run check:secrets
       # Node 20 has no coverage thresholds; 22 and 24 run the same tests with them
       - run: npm test

@@ -56,7 +56,8 @@
     "prepublishOnly": "npm test",
     "lint:package": "publint --strict && attw --pack . --exclude-entrypoints ./styles.css",
     "check:secrets": "node scripts/check-secrets.mjs --self-test",
-    "coverage": "rm -rf dist-test && tsc -p tsconfig.test.json && node --test --experimental-test-coverage --test-coverage-include=\"dist-test/src/**\" --test-coverage-lines=98 --test-coverage-branches=92 --test-coverage-functions=98 dist-test/test/chat.test.js dist-test/test/dom.test.js"
+    "coverage": "rm -rf dist-test && tsc -p tsconfig.test.json && node --test --experimental-test-coverage --test-coverage-include=\"dist-test/src/**\" --test-coverage-lines=98 --test-coverage-branches=92 --test-coverage-functions=98 dist-test/test/chat.test.js dist-test/test/dom.test.js",
+    "docs:check": "node scripts/check-readme.mjs"
   },
   "peerDependencies": {
     "react": "^18.3.1 || ^19.0.0"

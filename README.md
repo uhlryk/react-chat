@@ -241,20 +241,30 @@ library inside: pass strings from whatever you translate with.
 
 The defaults are exported as `defaultChatLabels`, and the type as `ChatLabels`.
 
-## Components
+## API reference
 
-| component | props |
-|---|---|
-| `Chat` | `messages`, `onSubmit(text)`. Optional: `prompt` + `onPromptChange` (you hold the text) or `defaultValue`; `busy` (no sending); `onStop` + `stopping` (the button becomes Stop while busy); `loading` (a waiting marker after the last message); `onOpenItem`; `empty` (shown with no messages); `renderMessage`; `renderInput` |
-| `ChatMessages` | the thread alone, in a box of its own that scrolls (give it a height, or a flex parent): `messages`, `loading`, `onOpenItem`, `empty`, `renderMessage` |
-| `ChatInput` | the input alone: `onSubmit(text)`. Optional: `prompt` + `onPromptChange` or `defaultValue`; `disabled`; `onStop`; `stopping` |
-| `ItemMessage` | one item line: `message`, `onOpen` |
-| `ChatModal` | a modal shell for an opened item: `open`, `title`, `onClose`, `children` |
+Every export of the package. CI checks that each one has its row here.
 
-`Chat`, `ChatMessages`, `ChatInput` and `ChatModal` also take `labels`, and every
-component takes `classNames` and `unstyled`. The props types are exported
-(`ChatProps`, `ChatInputProps`, …), as are `ChatMessage`, `ChatItem`, `ItemTone`,
-`ChatClassNames`, `ChatPart`, `ChatStyling`, `ChatLabels` and `defaultChatLabels`.
+| export | kind | what it is |
+|---|---|---|
+| `Chat` | component | The thread above, the input below. Required: `messages`, `onSubmit(text)`. Optional: `prompt` + `onPromptChange` (you hold the text) or `defaultValue`; `busy` (no sending); `onStop` + `stopping` (the button becomes Stop while busy); `loading` (a waiting marker after the last message); `onOpenItem`; `empty` (shown with no messages); `renderMessage`; `renderInput`; `labels`; `classNames`; `unstyled` |
+| `ChatMessages` | component | The thread alone, in a box of its own that scrolls (give it a height, or a flex parent): `messages`, `loading`, `onOpenItem`, `empty`, `renderMessage`, `labels`, `classNames`, `unstyled` |
+| `ChatInput` | component | The input alone: `onSubmit(text)`. Optional: `prompt` + `onPromptChange` or `defaultValue`; `disabled`; `onStop`; `stopping`; `labels`; `classNames`; `unstyled` |
+| `ItemMessage` | component | One item line: `message`, `onOpen`, `classNames`, `unstyled` |
+| `ChatModal` | component | A modal shell for an opened item: `open`, `title`, `onClose`, `children`, `labels`, `classNames`, `unstyled` |
+| `defaultChatLabels` | value | The English strings `labels` is merged over |
+| `ChatProps` | type | The props of `Chat` |
+| `ChatMessagesProps` | type | The props of `ChatMessages` |
+| `ChatInputProps` | type | The props of `ChatInput`, and what `renderInput` gets |
+| `ItemMessageProps` | type | The props of `ItemMessage` |
+| `ChatModalProps` | type | The props of `ChatModal` |
+| `ChatMessage` | type | One message: `user`, `assistant`, `item` or `card` (see [Messages](#messages)) |
+| `ChatItem` | type | The `item` kind of `ChatMessage`, as `onOpenItem` gets it |
+| `ItemTone` | type | `'neutral' \| 'progress' \| 'ok' \| 'warn' \| 'bad'` |
+| `ChatLabels` | type | Every string the thread shows (see [Labels](#labels)) |
+| `ChatClassNames` | type | `classNames`: a class per `ChatPart` |
+| `ChatPart` | type | The names of the parts `classNames` takes |
+| `ChatStyling` | type | `classNames` and `unstyled`, which every component takes |
 
 ## Versioning
 
@@ -270,6 +280,7 @@ npm ci
 npm run typecheck && npm run lint && npm test   # tests render on the server and in happy-dom
 npm run coverage                                # the same tests, failing under 98% lines and functions or 92% branches (Node 22+)
 npm run build && npm run lint:package           # publint and attw on the packed package
+npm run build && npm run docs:check             # every export has a row in the API reference
 npm run build && npm run check:secrets          # no credential in a tracked or packed file
 npm run build && npx http-server .              # then open /example/
 ```
