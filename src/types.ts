@@ -1,13 +1,15 @@
 import type { ReactNode } from 'react';
 
-/** Where a tool message is: in flight, or how it ended. */
-export type ToolState = 'running' | 'done' | 'refused' | 'cut' | 'error' | 'stopped';
+/** How an item's status reads: the package colours it, the host names it. */
+export type ItemTone = 'neutral' | 'progress' | 'ok' | 'warn' | 'bad';
 
 /**
- * One message of the thread. `user` and `assistant` carry content (any node: text,
- * markdown rendered by the consumer, a chart). A `tool` message is one line in the
- * thread — what was called and its state — and opens a details modal on click; the
- * modal's content is the consumer's.
+ * One message of the thread. `user` and `assistant` are the bubbles and carry any
+ * node: text, markdown the host rendered, a chart. An `item` is one line in the
+ * thread (anything the host wants listed: a call, a file, a step) and asks the
+ * host to open it on click. A `card` is a highlighted block whose body is the
+ * host's. The package keeps no conversation: the host passes the whole list on
+ * every render.
  */
 export type ChatMessage =
   | { id: string; kind: 'user'; content: ReactNode; actions?: ReactNode }
@@ -21,25 +23,23 @@ export type ChatMessage =
     }
   | {
       id: string;
-      /**
-       * Something the model PROPOSES that only the person can make happen (an
-       * action card): its body — what it would do, the buttons, the outcome — is
-       * the consumer's; the package gives it its own colour in the thread.
-       */
-      kind: 'action';
-      content: ReactNode;
+      kind: 'item';
+      /** What it is, in a line. */
+      label: ReactNode;
+      /** Where it stands, in the host's words; `tone` picks the colour (default `neutral`). */
+      status?: { text: ReactNode; tone?: ItemTone };
+      /** A short tail after the status. */
+      summary?: ReactNode;
+      /** Any name of the host's, rendered as the class `react-chat__item--{variant}`. */
+      variant?: string;
+      icon?: ReactNode;
     }
   | {
       id: string;
-      kind: 'tool';
-      /** What was called, in a line: tool, operation, the key arguments. */
-      label: ReactNode;
-      state: ToolState;
-      /** A short tail after the state: a refusal's reason, a size. */
-      summary?: ReactNode;
-      /**
-       * `nested`: a call made on behalf of another call (a sub-agent's), shown in
-       * a colour of its own so the two layers read apart. Default: `main`.
-       */
-      layer?: 'main' | 'nested';
+      kind: 'card';
+      content: ReactNode;
+      /** Any name of the host's, rendered as the class `react-chat__card--{variant}`. */
+      variant?: string;
     };
+
+export type ChatItem = Extract<ChatMessage, { kind: 'item' }>;

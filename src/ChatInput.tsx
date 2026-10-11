@@ -25,7 +25,7 @@ export function ChatInput({
 }: ChatInputProps) {
   const canSend = !disabled && prompt.trim() !== '';
   return (
-    <div className="flex flex-row items-end gap-2 border-t border-[var(--smi-chat-border,#d1d5db)] bg-[var(--smi-chat-surface,#ffffff)] p-3">
+    <div className="flex flex-row items-end gap-2 border-t border-[var(--react-chat-border,#d1d5db)] bg-[var(--react-chat-surface,#ffffff)] p-3">
       <textarea
         value={prompt}
         onChange={(event) => onPromptChange(event.target.value)}
@@ -37,14 +37,14 @@ export function ChatInput({
         }}
         rows={3}
         placeholder={placeholder}
-        className="block w-full resize-y rounded-lg border border-[var(--smi-chat-border,#d1d5db)] bg-[var(--smi-chat-input-bg,#f9fafb)] p-2.5 text-sm text-[var(--smi-chat-text,#111827)] focus:border-[var(--smi-chat-accent,#2563eb)] focus:outline-none"
+        className="block w-full resize-y rounded-lg border border-[var(--react-chat-border,#d1d5db)] bg-[var(--react-chat-input-bg,#f9fafb)] p-2.5 text-sm text-[var(--react-chat-text,#111827)] focus:border-[var(--react-chat-accent,#2563eb)] focus:outline-none"
       />
       {disabled && onStop ? (
         <button
           type="button"
           onClick={onStop}
           disabled={stopping}
-          className="rounded border border-[var(--smi-chat-bad,#b91c1c)] px-4 py-2 text-sm text-[var(--smi-chat-bad,#b91c1c)] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+          className="rounded border border-[var(--react-chat-tone-bad,#b91c1c)] px-4 py-2 text-sm text-[var(--react-chat-tone-bad,#b91c1c)] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
         >
           {stopping ? 'Stopping…' : 'Stop'}
         </button>
@@ -53,7 +53,7 @@ export function ChatInput({
           type="button"
           onClick={onSubmit}
           disabled={!canSend}
-          className="rounded bg-[var(--smi-chat-accent,#2563eb)] px-4 py-2 text-sm text-[var(--smi-chat-accent-text,#ffffff)] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+          className="rounded bg-[var(--react-chat-accent,#2563eb)] px-4 py-2 text-sm text-[var(--react-chat-accent-text,#ffffff)] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
         >
           Send
         </button>

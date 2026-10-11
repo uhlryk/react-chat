@@ -1,4 +1,4 @@
-import { useEffect, type ReactNode } from 'react';
+import { type ReactNode, useEffect } from 'react';
 
 interface ChatModalProps {
   open: boolean;
@@ -20,23 +20,23 @@ export function ChatModal({ open, title, onClose, children }: ChatModalProps) {
 
   if (!open) return null;
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
-      onClick={onClose}
-    >
+    // biome-ignore lint/a11y/noStaticElementInteractions: the backdrop's click is a mouse shortcut; Escape closes it from the keyboard
+    // biome-ignore lint/a11y/useKeyWithClickEvents: Escape is handled on window, above
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={onClose}>
+      {/* biome-ignore lint/a11y/useKeyWithClickEvents: only stops the backdrop's click; keys are the dialog's content's */}
       <div
         role="dialog"
         aria-modal="true"
-        className="flex max-h-[90vh] w-full max-w-4xl flex-col rounded-lg border border-[var(--smi-chat-border,#e5e7eb)] bg-[var(--smi-chat-surface,#ffffff)] text-[var(--smi-chat-text,#111827)] shadow-xl"
+        className="flex max-h-[90vh] w-full max-w-4xl flex-col rounded-lg border border-[var(--react-chat-border,#e5e7eb)] bg-[var(--react-chat-surface,#ffffff)] text-[var(--react-chat-text,#111827)] shadow-xl"
         onClick={(event) => event.stopPropagation()}
       >
-        <div className="flex flex-row items-center justify-between border-b border-[var(--smi-chat-border,#e5e7eb)] px-4 py-2">
+        <div className="flex flex-row items-center justify-between border-b border-[var(--react-chat-border,#e5e7eb)] px-4 py-2">
           <div className="text-sm font-semibold">{title}</div>
           <button
             type="button"
             onClick={onClose}
             aria-label="Close"
-            className="rounded px-2 text-[var(--smi-chat-muted,#6b7280)] hover:opacity-80"
+            className="rounded px-2 text-[var(--react-chat-muted,#6b7280)] hover:opacity-80"
           >
             ✕
           </button>

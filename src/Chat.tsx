@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { ChatInput } from './ChatInput.js';
 import { ChatMessages } from './ChatMessages.js';
-import type { ChatMessage } from './types.js';
+import type { ChatItem, ChatMessage } from './types.js';
 
 interface ChatProps {
   messages: ChatMessage[];
@@ -11,7 +11,7 @@ interface ChatProps {
   onSubmit: () => void;
   /** Disables sending (a reply in flight). */
   busy?: boolean;
-  onOpenTool?: (message: Extract<ChatMessage, { kind: 'tool' }>) => void;
+  onOpenItem?: (message: ChatItem) => void;
   empty?: ReactNode;
   placeholder?: string;
   /** Stops what runs while `busy` — the input's button becomes Stop. */
@@ -19,7 +19,7 @@ interface ChatProps {
   stopping?: boolean;
 }
 
-/** The thread above, the input below, in whatever box the consumer gives it. */
+/** The thread above, the input below, in whatever box the host gives it. */
 export function Chat({
   messages,
   loading,
@@ -27,7 +27,7 @@ export function Chat({
   onPromptChange,
   onSubmit,
   busy,
-  onOpenTool,
+  onOpenItem,
   empty,
   placeholder,
   onStop,
@@ -36,7 +36,7 @@ export function Chat({
   return (
     <div className="flex h-full min-h-0 flex-col">
       <div className="min-h-0 flex-1 overflow-y-auto">
-        <ChatMessages messages={messages} loading={loading} onOpenTool={onOpenTool} empty={empty} />
+        <ChatMessages messages={messages} loading={loading} onOpenItem={onOpenItem} empty={empty} />
       </div>
       <ChatInput
         prompt={prompt}
