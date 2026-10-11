@@ -1,0 +1,12 @@
+node_modules/
+dist/
+dist-test/
+*.tgz
+
+# credentials never belong in the repo
+.npmrc
+.env
+.env.*
+*.pem
+*.key
+*.log
