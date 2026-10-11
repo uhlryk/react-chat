@@ -6,6 +6,10 @@ All notable changes to `@krzysztofsztompka/react-chat`. The format follows
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-10-11
+
+The API is stable: from here, breaking changes come only in a new major version.
+
 ### Added
 
 - The components are marked `'use client'`, so a React Server Components host
@@ -101,7 +105,8 @@ All notable changes to `@krzysztofsztompka/react-chat`. The format follows
 - Every colour as a `--react-chat-*` CSS variable with a light default.
 - ES modules and CommonJS, with types.
 
-[Unreleased]: https://github.com/uhlryk/react-chat/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/uhlryk/react-chat/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/uhlryk/react-chat/compare/v0.4.0...v1.0.0
 [0.4.0]: https://github.com/uhlryk/react-chat/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/uhlryk/react-chat/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/uhlryk/react-chat/compare/v0.1.0...v0.2.0
