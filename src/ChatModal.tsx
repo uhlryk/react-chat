@@ -39,12 +39,8 @@ export function ChatModal({ open, title, onClose, children, labels, ...styling }
       }
       const box = dialog.current;
       if (event.key !== 'Tab' || box == null) return;
+      // never empty: the close button is always there
       const focusable = [...box.querySelectorAll<HTMLElement>(FOCUSABLE)];
-      if (focusable.length === 0) {
-        event.preventDefault();
-        box.focus();
-        return;
-      }
       const first = focusable[0];
       const last = focusable[focusable.length - 1];
       const active = document.activeElement;

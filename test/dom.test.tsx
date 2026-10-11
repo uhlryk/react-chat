@@ -202,3 +202,79 @@ test('the modal’s focus survives a host that passes a new onClose every render
   assert.equal(closes, 1);
   same(document.activeElement, $('#opener'), `focus is on ${name(document.activeElement)}`);
 });
+
+test('a click on an item hands that item to onOpenItem', () => {
+  const opened: string[] = [];
+  const item = { id: 'i', kind: 'item', label: 'prices' } as const;
+  render(<Chat messages={[item]} onSubmit={noop} onOpenItem={(m) => opened.push(m.id)} />);
+  act(() => $<HTMLButtonElement>('.react-chat__item')!.click());
+  assert.deepEqual(opened, ['i']);
+});
+
+test('content that grows by itself is followed at the end, and left alone once scrolled up', () => {
+  const observers: (() => void)[] = [];
+  const original = globalThis.ResizeObserver;
+  globalThis.ResizeObserver = class {
+    constructor(callback: () => void) {
+      observers.push(callback);
+    }
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  } as unknown as typeof ResizeObserver;
+  const grow = () =>
+    act(() => {
+      for (const grown of observers) grown();
+    });
+  try {
+    render(<Chat messages={thread(3)} onSubmit={noop} />);
+    const box = $('.react-chat__viewport')!;
+    layout.scrollHeight = 1100; // an image in the last message has loaded
+    grow();
+    assert.equal(box.scrollTop, 1100);
+    scrollTo(100);
+    layout.scrollHeight = 1200;
+    grow();
+    assert.equal(box.scrollTop, 100);
+  } finally {
+    globalThis.ResizeObserver = original;
+  }
+});
+
+test('Stop calls onStop, and a controlled input reports every change', () => {
+  let stops = 0;
+  const changes: string[] = [];
+  render(
+    <ChatInput prompt="" onPromptChange={(v) => changes.push(v)} onSubmit={noop} disabled onStop={() => stops++} />,
+  );
+  act(() => $<HTMLButtonElement>('.react-chat__button--stop')!.click());
+  assert.equal(stops, 1);
+  type($<HTMLTextAreaElement>('textarea')!, 'abc');
+  assert.deepEqual(changes, ['abc']);
+});
+
+test('the backdrop closes the modal, a click inside it does not', () => {
+  let closes = 0;
+  render(
+    <ChatModal open title="t" onClose={() => closes++}>
+      <p id="body">b</p>
+    </ChatModal>,
+  );
+  act(() => $('#body')!.click());
+  assert.equal(closes, 0);
+  act(() => $('.react-chat__backdrop')!.click());
+  assert.equal(closes, 1);
+});
+
+test('Tab from outside the modal lands inside it', () => {
+  render(<WithModal />);
+  const opener = $<HTMLButtonElement>('#opener')!;
+  opener.focus();
+  act(() => opener.click());
+  opener.focus(); // focus escaped somehow
+  key('Tab');
+  same(document.activeElement, $('.react-chat__modal-close'), `focus is on ${name(document.activeElement)}`);
+  opener.focus();
+  key('Tab', true);
+  same(document.activeElement, $('#inside'), `focus is on ${name(document.activeElement)}`);
+});

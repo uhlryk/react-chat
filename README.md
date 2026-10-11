@@ -268,6 +268,7 @@ Every release is listed in [CHANGELOG.md](CHANGELOG.md).
 ```sh
 npm ci
 npm run typecheck && npm run lint && npm test   # tests render on the server and in happy-dom
+npm run coverage                                # the same tests, failing under 98% lines and functions or 92% branches (Node 22+)
 npm run build && npm run lint:package           # publint and attw on the packed package
 npm run build && npm run check:secrets          # no credential in a tracked or packed file
 npm run build && npx http-server .              # then open /example/
