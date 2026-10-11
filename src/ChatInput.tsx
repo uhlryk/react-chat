@@ -1,15 +1,17 @@
 import { type ChatStyling, cls } from './classes.js';
+import { type ChatLabels, withDefaults } from './labels.js';
 
 export interface ChatInputProps extends ChatStyling {
   prompt: string;
   onPromptChange: (value: string) => void;
   onSubmit: () => void;
   disabled?: boolean;
-  placeholder?: string;
   /** Given while something runs: the button stops it instead of sending. */
   onStop?: () => void;
   /** A stop was asked for and has not landed yet. */
   stopping?: boolean;
+  /** The strings it shows, over the English defaults. */
+  labels?: Partial<ChatLabels>;
 }
 
 /**
@@ -21,11 +23,12 @@ export function ChatInput({
   onPromptChange,
   onSubmit,
   disabled = false,
-  placeholder = 'Ask a question…',
   onStop,
   stopping = false,
+  labels,
   ...styling
 }: ChatInputProps) {
+  const text = withDefaults(labels);
   const canSend = !disabled && prompt.trim() !== '';
   return (
     <div className={cls(styling, 'input', 'react-chat__input')}>
@@ -39,7 +42,7 @@ export function ChatInput({
           }
         }}
         rows={3}
-        placeholder={placeholder}
+        placeholder={text.placeholder}
         className={cls(styling, 'textarea', 'react-chat__textarea')}
       />
       {disabled && onStop ? (
@@ -49,7 +52,7 @@ export function ChatInput({
           disabled={stopping}
           className={cls(styling, ['button', 'stopButton'], 'react-chat__button', 'react-chat__button--stop')}
         >
-          {stopping ? 'Stopping…' : 'Stop'}
+          {stopping ? text.stopping : text.stop}
         </button>
       ) : (
         <button
@@ -58,7 +61,7 @@ export function ChatInput({
           disabled={!canSend}
           className={cls(styling, ['button', 'sendButton'], 'react-chat__button', 'react-chat__button--send')}
         >
-          Send
+          {text.send}
         </button>
       )}
     </div>

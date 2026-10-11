@@ -1,15 +1,18 @@
 import { type ReactNode, useEffect } from 'react';
 import { type ChatStyling, cls } from './classes.js';
+import { type ChatLabels, withDefaults } from './labels.js';
 
 export interface ChatModalProps extends ChatStyling {
   open: boolean;
   title: ReactNode;
   onClose: () => void;
   children: ReactNode;
+  /** The strings it announces, over the English defaults. */
+  labels?: Partial<ChatLabels>;
 }
 
 /** A modal over the page; Escape or the backdrop closes it. The consumer renders what is inside. */
-export function ChatModal({ open, title, onClose, children, ...styling }: ChatModalProps) {
+export function ChatModal({ open, title, onClose, children, labels, ...styling }: ChatModalProps) {
   useEffect(() => {
     if (!open) return;
     const onKey = (event: KeyboardEvent) => {
@@ -36,7 +39,7 @@ export function ChatModal({ open, title, onClose, children, ...styling }: ChatMo
           <button
             type="button"
             onClick={onClose}
-            aria-label="Close"
+            aria-label={withDefaults(labels).close}
             className={cls(styling, 'modalClose', 'react-chat__modal-close')}
           >
             ✕

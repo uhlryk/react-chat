@@ -160,18 +160,42 @@ type ItemTone = 'neutral' | 'progress' | 'ok' | 'warn' | 'bad';
 - **`card`** is a highlighted block whose body is yours, for example a proposal
   with its own buttons.
 
+## Labels
+
+Every string the thread shows or announces comes from `labels`, a partial object
+merged over the English defaults. `Chat` passes it down to the thread and the
+input. `ChatModal` is rendered by you, so give it its own. There is no i18n
+library inside: pass strings from whatever you translate with.
+
+```tsx
+<Chat {...props} labels={{ send: 'Wyślij', placeholder: 'Zadaj pytanie…' }} />
+```
+
+| key | default | where |
+|---|---|---|
+| `send` | `Send` | the send button |
+| `stop` | `Stop` | the button while busy, when you pass `onStop` |
+| `stopping` | `Stopping…` | the same button after a stop was asked for |
+| `placeholder` | `Ask a question…` | the empty text area |
+| `close` | `Close` | the modal's close button (its `aria-label`) |
+| `loading` | `…` | the waiting marker after the last message |
+
+The defaults are exported as `defaultChatLabels`, and the type as `ChatLabels`.
+
 ## Components
 
 | component | props |
 |---|---|
-| `Chat` | `messages`, `prompt`, `onPromptChange`, `onSubmit`; optional `busy` (no sending), `onStop` + `stopping` (the button becomes Stop while busy), `loading` (a waiting marker after the last message), `onOpenItem`, `empty` (shown with no messages), `placeholder`, `renderMessage`, `renderInput` |
+| `Chat` | `messages`, `prompt`, `onPromptChange`, `onSubmit`; optional `busy` (no sending), `onStop` + `stopping` (the button becomes Stop while busy), `loading` (a waiting marker after the last message), `onOpenItem`, `empty` (shown with no messages), `renderMessage`, `renderInput` |
 | `ChatMessages` | the thread alone: `messages`, `loading`, `onOpenItem`, `empty`, `renderMessage` |
-| `ChatInput` | the input alone: `prompt`, `onPromptChange`, `onSubmit`, `disabled`, `placeholder`, `onStop`, `stopping`. Enter sends, Shift+Enter is a new line |
+| `ChatInput` | the input alone: `prompt`, `onPromptChange`, `onSubmit`, `disabled`, `onStop`, `stopping`. Enter sends, Shift+Enter is a new line |
 | `ItemMessage` | one item line: `message`, `onOpen` |
 | `ChatModal` | a modal shell for an opened item: `open`, `title`, `onClose`, `children`. Escape or the backdrop closes it |
 
-Every component also takes `classNames` and `unstyled`. The props types are
-exported (`ChatProps`, `ChatInputProps`, …), as are `ChatClassNames` and `ChatPart`.
+`Chat`, `ChatMessages`, `ChatInput` and `ChatModal` also take `labels`; every
+component takes `classNames` and `unstyled`. The props types are
+exported (`ChatProps`, `ChatInputProps`, …), as are `ChatClassNames`, `ChatPart`,
+`ChatLabels` and `defaultChatLabels`.
 
 ## License
 

@@ -1,6 +1,7 @@
 import { Fragment, type ReactNode, useEffect, useRef } from 'react';
 import { type ChatStyling, cls } from './classes.js';
 import { ItemMessage } from './ItemMessage.js';
+import { type ChatLabels, withDefaults } from './labels.js';
 import type { ChatItem, ChatMessage } from './types.js';
 
 export interface ChatMessagesProps extends ChatStyling {
@@ -15,6 +16,8 @@ export interface ChatMessagesProps extends ChatStyling {
    * package's own row, for a host that only wraps or changes some kinds.
    */
   renderMessage?: (message: ChatMessage, defaultRender: (message: ChatMessage) => ReactNode) => ReactNode;
+  /** The strings it shows, over the English defaults. */
+  labels?: Partial<ChatLabels>;
 }
 
 /** The thread, oldest first, scrolled to its end as it grows. */
@@ -24,6 +27,7 @@ export function ChatMessages({
   onOpenItem,
   empty,
   renderMessage,
+  labels,
   ...styling
 }: ChatMessagesProps) {
   const end = useRef<HTMLDivElement>(null);
@@ -97,7 +101,7 @@ export function ChatMessages({
       ))}
       {loading && (
         <div className={row('loading')} data-kind="loading">
-          <span className={cls(styling, 'loading', 'react-chat__loading')}>…</span>
+          <span className={cls(styling, 'loading', 'react-chat__loading')}>{withDefaults(labels).loading}</span>
         </div>
       )}
       <div ref={end} />

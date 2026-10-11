@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { ChatInput, type ChatInputProps } from './ChatInput.js';
 import { ChatMessages, type ChatMessagesProps } from './ChatMessages.js';
 import { type ChatStyling, cls } from './classes.js';
+import type { ChatLabels } from './labels.js';
 import type { ChatItem, ChatMessage } from './types.js';
 
 export interface ChatProps extends ChatStyling {
@@ -14,7 +15,6 @@ export interface ChatProps extends ChatStyling {
   busy?: boolean;
   onOpenItem?: (message: ChatItem) => void;
   empty?: ReactNode;
-  placeholder?: string;
   /** Stops what runs while `busy` — the input's button becomes Stop. */
   onStop?: () => void;
   stopping?: boolean;
@@ -22,6 +22,8 @@ export interface ChatProps extends ChatStyling {
   renderMessage?: ChatMessagesProps['renderMessage'];
   /** Renders the input in place of the package, given what `ChatInput` would get. */
   renderInput?: (props: ChatInputProps) => ReactNode;
+  /** Every string the thread shows, over the English defaults; passed down to the thread and the input. */
+  labels?: Partial<ChatLabels>;
 }
 
 /** The thread above, the input below, in whatever box the host gives it. */
@@ -34,11 +36,11 @@ export function Chat({
   busy,
   onOpenItem,
   empty,
-  placeholder,
   onStop,
   stopping,
   renderMessage,
   renderInput,
+  labels,
   ...styling
 }: ChatProps) {
   const input: ChatInputProps = {
@@ -46,9 +48,9 @@ export function Chat({
     onPromptChange,
     onSubmit,
     disabled: busy,
-    placeholder,
     onStop,
     stopping,
+    labels,
     ...styling,
   };
   return (
@@ -60,6 +62,7 @@ export function Chat({
           onOpenItem={onOpenItem}
           empty={empty}
           renderMessage={renderMessage}
+          labels={labels}
           {...styling}
         />
       </div>

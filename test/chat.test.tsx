@@ -2,7 +2,16 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { Chat, ChatInput, type ChatMessage, ChatMessages, ChatModal, ItemMessage } from '../src/index.js';
+import {
+  Chat,
+  ChatInput,
+  type ChatLabels,
+  type ChatMessage,
+  ChatMessages,
+  ChatModal,
+  defaultChatLabels,
+  ItemMessage,
+} from '../src/index.js';
 
 const html = (node: Parameters<typeof renderToStaticMarkup>[0]) => renderToStaticMarkup(node);
 const noop = () => {};
@@ -152,11 +161,11 @@ test('renderInput replaces the input and gets what ChatInput would', () => {
       onPromptChange={noop}
       onSubmit={noop}
       busy
-      placeholder="say"
-      renderInput={(p) => <output>{`${p.prompt}|${p.disabled}|${p.placeholder}`}</output>}
+      labels={{ send: 'go' }}
+      renderInput={(p) => <output>{`${p.prompt}|${p.disabled}|${p.labels?.send}`}</output>}
     />,
   );
-  assert.match(out, /<output>draft\|true\|say<\/output>/);
+  assert.match(out, /<output>draft\|true\|go<\/output>/);
   assert.doesNotMatch(out, /textarea/);
 });
 
@@ -182,4 +191,38 @@ test('the stylesheet styles every part, and weighs nothing', () => {
     if (!/\{\s*$/.test(line) || /^\s*(@|\)|\d)/.test(line)) continue;
     assert.match(line.trim(), /^:where\(/, `a selector outside :where(): ${line.trim()}`);
   }
+});
+
+test('labels replace every string, and no English default is left', () => {
+  const labels: ChatLabels = {
+    send: 'Wyślij',
+    stop: 'Zatrzymaj',
+    stopping: 'Zatrzymuję',
+    placeholder: 'Zadaj pytanie',
+    close: 'Zamknij',
+    loading: 'czekam',
+  };
+  const props = { prompt: 'x', onPromptChange: noop, onSubmit: noop, labels };
+  const out = [
+    html(<Chat messages={everyKind} loading {...props} />),
+    html(<Chat messages={[]} busy onStop={noop} {...props} />),
+    html(<Chat messages={[]} busy onStop={noop} stopping {...props} />),
+    html(<ChatMessages messages={[]} loading labels={labels} />),
+    html(<ChatInput {...props} />),
+    html(
+      <ChatModal open title="t" onClose={noop} labels={labels}>
+        b
+      </ChatModal>,
+    ),
+  ].join('');
+  for (const text of Object.values(labels)) assert.ok(out.includes(text), `${text} is shown`);
+  for (const text of Object.values(defaultChatLabels)) {
+    assert.ok(!out.includes(text), `the default ${JSON.stringify(text)} is left`);
+  }
+});
+
+test('a partial labels object keeps the English defaults for the rest', () => {
+  const out = html(<ChatInput prompt="" onPromptChange={noop} onSubmit={noop} labels={{ send: 'Go' }} />);
+  assert.match(out, />Go</);
+  assert.match(out, /placeholder="Ask a question…"/);
 });

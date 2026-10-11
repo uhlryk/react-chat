@@ -6,6 +6,18 @@ All notable changes to `@krzysztofsztompka/react-chat`. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- `labels` on `Chat`, `ChatMessages`, `ChatInput` and `ChatModal`: every string the
+  thread shows or announces (`send`, `stop`, `stopping`, `placeholder`, `close`,
+  `loading`), merged over the English defaults. `Chat` passes it down.
+- The `ChatLabels` type and the `defaultChatLabels` object are exported.
+
+### Removed
+
+- **Breaking:** the `placeholder` prop on `Chat` and `ChatInput`. Use
+  `labels.placeholder` instead.
+
 ## [0.2.0] - 2026-10-11
 
 ### Added
