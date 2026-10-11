@@ -248,3 +248,10 @@ test('an item is named by its label, status and summary, each its own word', () 
   const texts = ids.map((id) => out.match(new RegExp(`id="${id}"[^>]*>([^<]*)<`))?.[1]);
   assert.deepEqual(texts, ['prices', 'ok', '3 rows']);
 });
+
+test('every component is a client component, for React Server Components hosts', () => {
+  for (const name of ['Chat', 'ChatInput', 'ChatMessages', 'ChatModal', 'ItemMessage']) {
+    const source = readFileSync(`src/${name}.tsx`, 'utf8');
+    assert.ok(source.startsWith("'use client';\n"), `${name}.tsx starts with 'use client'`);
+  }
+});

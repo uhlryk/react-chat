@@ -1,3 +1,5 @@
+'use client';
+
 import type { ReactNode } from 'react';
 import { ChatInput, type ChatInputProps } from './ChatInput.js';
 import { ChatMessages, type ChatMessagesProps } from './ChatMessages.js';

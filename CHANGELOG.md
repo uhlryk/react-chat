@@ -6,6 +6,20 @@ All notable changes to `@krzysztofsztompka/react-chat`. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- The components are marked `'use client'`, so a React Server Components host
+  (the Next.js App Router) imports them directly.
+- `publint` and `attw` run in CI (`npm run lint:package`).
+- CI installs the packed package into an empty Vite + React app with no
+  Tailwind and builds it.
+- The README covers streaming and stopping, items with the modal, browser
+  support, versioning and contributing.
+
+### Changed
+
+- `package.json` declares `"type": "commonjs"`.
+
 ## [0.4.0] - 2026-10-11
 
 ### Added

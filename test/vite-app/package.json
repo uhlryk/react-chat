@@ -1,0 +1,16 @@
+{
+  "name": "react-chat-vite-app",
+  "private": true,
+  "description": "An empty Vite + React app with no Tailwind: CI installs the packed package here and builds it",
+  "type": "module",
+  "scripts": {
+    "build": "vite build"
+  },
+  "dependencies": {
+    "react": "19.1.1",
+    "react-dom": "19.1.1"
+  },
+  "devDependencies": {
+    "vite": "8.3.1"
+  }
+}

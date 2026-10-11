@@ -1,3 +1,5 @@
+'use client';
+
 import { type ReactNode, useEffect, useId, useRef } from 'react';
 import { type ChatStyling, cls } from './classes.js';
 import { type ChatLabels, withDefaults } from './labels.js';

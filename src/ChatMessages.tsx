@@ -1,3 +1,5 @@
+'use client';
+
 import { Fragment, type ReactNode, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { type ChatStyling, cls } from './classes.js';
 import { ItemMessage } from './ItemMessage.js';

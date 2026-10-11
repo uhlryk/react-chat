@@ -1,3 +1,5 @@
+'use client';
+
 import { useId } from 'react';
 import { type ChatStyling, cls } from './classes.js';
 import type { ChatItem } from './types.js';
