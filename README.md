@@ -288,6 +288,14 @@ npm run build && npx http-server .              # then open /example/
 The CI also installs the packed package into an empty Vite app
 ([`test/vite-app/`](test/vite-app/)) and builds it there.
 
+An API change updates, in the same commit:
+- the README section that describes it;
+- its row in the API reference;
+- a test;
+- the `Unreleased` section of the CHANGELOG.
+
+The [issue template](.github/ISSUE_TEMPLATE/feature.md) carries this checklist.
+
 ## License
 
 MIT
