@@ -50,7 +50,7 @@ if (process.argv.includes('--self-test')) {
     'Anthropic or OpenAI key': `sk-ant-${'g'.repeat(40)}`,
     'Google API key': `AIza${'h'.repeat(35)}`,
     'GitLab token': `glpat-${'i'.repeat(20)}`,
-    'password in a URL': `https://user:${'p'.repeat(6)}@example.com`,
+    'password in a URL': ['https://user', `${'p'.repeat(6)}@example.com`].join(':'),
   };
   const missed = Object.keys(PATTERNS).filter((name) => !PATTERNS[name].test(fakes[name] ?? ''));
   const forbidden = ['.npmrc', 'a/.env', '.env.local', 'id_rsa', 'x.pem'].filter((f) => !FORBIDDEN_FILES.test(f));
