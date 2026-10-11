@@ -1,10 +1,16 @@
+import { useState } from 'react';
 import { type ChatStyling, cls } from './classes.js';
 import { type ChatLabels, withDefaults } from './labels.js';
 
 export interface ChatInputProps extends ChatStyling {
-  prompt: string;
-  onPromptChange: (value: string) => void;
-  onSubmit: () => void;
+  /** The text, when the host holds it (controlled); leave it out to let the input hold it. */
+  prompt?: string;
+  /** Every change of the text; with `prompt`, the host stores it. */
+  onPromptChange?: (value: string) => void;
+  /** The text the input starts with when it holds the text itself. */
+  defaultValue?: string;
+  /** The person sends `text`. An input that holds its own text empties itself after. */
+  onSubmit: (text: string) => void;
   disabled?: boolean;
   /** Given while something runs: the button stops it instead of sending. */
   onStop?: () => void;
@@ -16,11 +22,13 @@ export interface ChatInputProps extends ChatStyling {
 
 /**
  * Enter sends, Shift+Enter is a new line. Nothing is sent while `disabled` or blank;
- * with `onStop`, the button is Stop while `disabled`.
+ * with `onStop`, the button is Stop while `disabled`. Controlled with `prompt`,
+ * uncontrolled without it.
  */
 export function ChatInput({
   prompt,
   onPromptChange,
+  defaultValue = '',
   onSubmit,
   disabled = false,
   onStop,
@@ -29,16 +37,27 @@ export function ChatInput({
   ...styling
 }: ChatInputProps) {
   const text = withDefaults(labels);
-  const canSend = !disabled && prompt.trim() !== '';
+  const [own, setOwn] = useState(defaultValue);
+  const controlled = prompt !== undefined;
+  const value = controlled ? prompt : own;
+  const canSend = !disabled && value.trim() !== '';
+  const send = () => {
+    if (!canSend) return;
+    onSubmit(value);
+    if (!controlled) setOwn('');
+  };
   return (
     <div className={cls(styling, 'input', 'react-chat__input')}>
       <textarea
-        value={prompt}
-        onChange={(event) => onPromptChange(event.target.value)}
+        value={value}
+        onChange={(event) => {
+          if (!controlled) setOwn(event.target.value);
+          onPromptChange?.(event.target.value);
+        }}
         onKeyDown={(event) => {
           if (event.key === 'Enter' && !event.shiftKey) {
             event.preventDefault();
-            if (canSend) onSubmit();
+            send();
           }
         }}
         rows={3}
@@ -57,7 +76,7 @@ export function ChatInput({
       ) : (
         <button
           type="button"
-          onClick={onSubmit}
+          onClick={send}
           disabled={!canSend}
           className={cls(styling, ['button', 'sendButton'], 'react-chat__button', 'react-chat__button--send')}
         >

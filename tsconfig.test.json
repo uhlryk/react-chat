@@ -5,7 +5,8 @@
     "outDir": "dist-test",
     "declaration": false,
     "types": ["node"],
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "skipLibCheck": true
   },
   "include": ["src", "test"]
 }

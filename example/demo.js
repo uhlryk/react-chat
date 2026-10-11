@@ -28,19 +28,13 @@ const start = [
 
 function Demo() {
   const [messages, setMessages] = useState(start);
-  const [prompt, setPrompt] = useState('');
   const [open, setOpen] = useState(null);
   return h(
     'div',
     { style: { height: '100%' } },
     h(Chat, {
       messages,
-      prompt,
-      onPromptChange: setPrompt,
-      onSubmit: () => {
-        setMessages([...messages, { id: String(messages.length + 1), kind: 'user', content: prompt }]);
-        setPrompt('');
-      },
+      onSubmit: (text) => setMessages([...messages, { id: String(messages.length + 1), kind: 'user', content: text }]),
       onOpenItem: setOpen,
     }),
     h(

@@ -1,4 +1,4 @@
-import { Fragment, type ReactNode, useEffect, useRef } from 'react';
+import { Fragment, type ReactNode, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { type ChatStyling, cls } from './classes.js';
 import { ItemMessage } from './ItemMessage.js';
 import { type ChatLabels, withDefaults } from './labels.js';
@@ -20,7 +20,18 @@ export interface ChatMessagesProps extends ChatStyling {
   labels?: Partial<ChatLabels>;
 }
 
-/** The thread, oldest first, scrolled to its end as it grows. */
+// Layout effects scroll before the paint; on a server there is nothing to scroll.
+const useIsomorphicLayoutEffect = typeof window === 'undefined' ? useEffect : useLayoutEffect;
+
+/** How close to the end, in pixels, still counts as reading the newest message. */
+const NEAR_END = 32;
+
+/**
+ * The thread, oldest first, in a box of its own that scrolls. It follows the
+ * end as the thread grows while the reader is there; once they scroll up it
+ * stays put and offers a way back. The person's own new message brings them
+ * back down.
+ */
 export function ChatMessages({
   messages,
   loading = false,
@@ -30,16 +41,54 @@ export function ChatMessages({
   labels,
   ...styling
 }: ChatMessagesProps) {
-  const end = useRef<HTMLDivElement>(null);
+  const text = withDefaults(labels);
+  const viewport = useRef<HTMLDivElement>(null);
+  const thread = useRef<HTMLDivElement>(null);
+  // whether to follow the end, kept in a ref so following needs no render
+  const following = useRef(true);
+  const [atEnd, setAtEnd] = useState(true);
+  const newest = useRef<string | undefined>(undefined);
   const last = messages[messages.length - 1];
-  // biome-ignore lint/correctness/useExhaustiveDependencies: the dependencies are the triggers — a new message, a growing last one, the loading marker
-  useEffect(() => {
-    end.current?.scrollIntoView?.({ block: 'end' });
+
+  const toEnd = () => {
+    const box = viewport.current;
+    if (box) box.scrollTop = box.scrollHeight;
+  };
+
+  useIsomorphicLayoutEffect(() => {
+    if (last != null && last.id !== newest.current) {
+      newest.current = last.id;
+      if (last.kind === 'user') {
+        following.current = true;
+        setAtEnd(true);
+      }
+    }
+    if (following.current) toEnd();
   }, [messages.length, last, loading]);
 
-  if (messages.length === 0 && !loading && empty != null) {
-    return <div className={cls(styling, 'empty', 'react-chat__empty')}>{empty}</div>;
-  }
+  // content that grows by itself (an image loading, a chart drawing) is followed too
+  // biome-ignore lint/correctness/useExhaustiveDependencies: toEnd only reads refs
+  useEffect(() => {
+    const content = thread.current;
+    if (content == null || typeof ResizeObserver === 'undefined') return;
+    const observer = new ResizeObserver(() => {
+      if (following.current) toEnd();
+    });
+    observer.observe(content);
+    return () => observer.disconnect();
+  }, []);
+
+  const onScroll = () => {
+    const box = viewport.current;
+    if (box == null) return;
+    const end = box.scrollHeight - box.scrollTop - box.clientHeight <= NEAR_END;
+    following.current = end;
+    setAtEnd(end);
+  };
+
+  const showEmpty = messages.length === 0 && !loading && empty != null;
+  // a reply still arriving is announced once, when it is complete
+  const busy = loading || messages.some((message) => message.kind === 'assistant' && message.streaming);
 
   const row = (kind: string) => cls(styling, 'row', 'react-chat__row', `react-chat__row--${kind}`);
   const defaultRender = (message: ChatMessage): ReactNode => {
@@ -93,18 +142,41 @@ export function ChatMessages({
   };
 
   return (
-    <div className={cls(styling, 'thread', 'react-chat__thread')}>
-      {messages.map((message) => (
-        <Fragment key={message.id}>
-          {renderMessage ? renderMessage(message, defaultRender) : defaultRender(message)}
-        </Fragment>
-      ))}
-      {loading && (
-        <div className={row('loading')} data-kind="loading">
-          <span className={cls(styling, 'loading', 'react-chat__loading')}>{withDefaults(labels).loading}</span>
+    <div className={cls(styling, 'messages', 'react-chat__messages')}>
+      <div ref={viewport} onScroll={onScroll} className={cls(styling, 'viewport', 'react-chat__viewport')}>
+        {showEmpty && <div className={cls(styling, 'empty', 'react-chat__empty')}>{empty}</div>}
+        <div
+          ref={thread}
+          role="log"
+          aria-live="polite"
+          aria-busy={busy || undefined}
+          className={cls(styling, 'thread', 'react-chat__thread')}
+        >
+          {messages.map((message) => (
+            <Fragment key={message.id}>
+              {renderMessage ? renderMessage(message, defaultRender) : defaultRender(message)}
+            </Fragment>
+          ))}
+          {loading && (
+            <div className={row('loading')} data-kind="loading">
+              <span className={cls(styling, 'loading', 'react-chat__loading')}>{text.loading}</span>
+            </div>
+          )}
         </div>
+      </div>
+      {!atEnd && messages.length > 0 && (
+        <button
+          type="button"
+          onClick={() => {
+            following.current = true;
+            setAtEnd(true);
+            toEnd();
+          }}
+          className={cls(styling, 'jumpButton', 'react-chat__jump')}
+        >
+          {text.jumpToLatest}
+        </button>
       )}
-      <div ref={end} />
     </div>
   );
 }

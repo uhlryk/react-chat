@@ -77,8 +77,8 @@ It works with any class-based tool, for example Tailwind or CSS modules:
 <Chat {...props} classNames={{ userMessage: 'my-bubble', sendButton: 'my-send' }} />
 ```
 
-The parts are `root`, `viewport`, `thread`, `empty`, `row`, `message`,
-`userMessage`, `assistantMessage`, `cursor`, `actions`, `loading`, `item`,
+The parts are `root`, `messages`, `viewport`, `thread`, `empty`, `row`, `message`,
+`userMessage`, `assistantMessage`, `cursor`, `actions`, `loading`, `jumpButton`, `item`,
 `itemIcon`, `itemLabel`, `itemStatus`, `itemSummary`, `card`, `input`,
 `textarea`, `button`, `sendButton`, `stopButton`, and for `ChatModal`:
 `backdrop`, `modal`, `modalHeader`, `modalTitle`, `modalClose`, `modalBody`.
@@ -114,12 +114,9 @@ import { Chat, type ChatMessage } from '@krzysztofsztompka/react-chat';
 
 function Support() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [prompt, setPrompt] = useState('');
   const [busy, setBusy] = useState(false);
 
-  async function send() {
-    const question = prompt;
-    setPrompt('');
+  async function send(question: string) {
     setBusy(true);
     setMessages((m) => [...m, { id: crypto.randomUUID(), kind: 'user', content: question }]);
     const answer = await ask(question); // your transport
@@ -129,7 +126,7 @@ function Support() {
 
   return (
     <div style={{ height: 600 }}>
-      <Chat messages={messages} prompt={prompt} onPromptChange={setPrompt} onSubmit={send} busy={busy} />
+      <Chat messages={messages} onSubmit={send} busy={busy} />
     </div>
   );
 }
@@ -138,6 +135,24 @@ function Support() {
 `Chat` fills the box you give it: the thread scrolls, the input stays at the bottom.
 To stream an answer, keep replacing the same `assistant` message with
 `streaming: true` and drop the flag when it is complete.
+
+The input holds its own text here: `onSubmit(text)` gets it, and the input empties
+itself. To hold the text yourself (a draft you keep, text you insert), pass
+`prompt` and `onPromptChange`. `onSubmit(text)` then still gets the text, and
+clearing it is up to you. `defaultValue` sets where an input that holds its own
+text starts.
+
+## Behaviour
+
+- **Scrolling.** The thread follows the newest message while the reader is at the
+  end. Once they scroll up, it stays where they are and shows a "Jump to latest"
+  button. The person's own new message brings them back down.
+- **Screen readers.** The thread is a `role="log"` with `aria-live="polite"`.
+  While a reply is still arriving (`streaming`) or `loading`, it is
+  `aria-busy`, so the reply is read once it is complete rather than token by
+  token. An item line is named by its label, status and summary, as separate words.
+- **The modal** moves focus into itself, keeps Tab and Shift+Tab inside, and on
+  close gives focus back to whatever had it before. It is labelled by its title.
 
 ## Messages
 
@@ -179,6 +194,7 @@ library inside: pass strings from whatever you translate with.
 | `placeholder` | `Ask a question…` | the empty text area |
 | `close` | `Close` | the modal's close button (its `aria-label`) |
 | `loading` | `…` | the waiting marker after the last message |
+| `jumpToLatest` | `Jump to latest` | the button back to the newest message, once the reader has scrolled up |
 
 The defaults are exported as `defaultChatLabels`, and the type as `ChatLabels`.
 
@@ -186,9 +202,9 @@ The defaults are exported as `defaultChatLabels`, and the type as `ChatLabels`.
 
 | component | props |
 |---|---|
-| `Chat` | `messages`, `prompt`, `onPromptChange`, `onSubmit`; optional `busy` (no sending), `onStop` + `stopping` (the button becomes Stop while busy), `loading` (a waiting marker after the last message), `onOpenItem`, `empty` (shown with no messages), `renderMessage`, `renderInput` |
-| `ChatMessages` | the thread alone: `messages`, `loading`, `onOpenItem`, `empty`, `renderMessage` |
-| `ChatInput` | the input alone: `prompt`, `onPromptChange`, `onSubmit`, `disabled`, `onStop`, `stopping`. Enter sends, Shift+Enter is a new line |
+| `Chat` | `messages`, `onSubmit(text)`; optional `prompt` + `onPromptChange` (you hold the text) or `defaultValue`, `busy` (no sending), `onStop` + `stopping` (the button becomes Stop while busy), `loading` (a waiting marker after the last message), `onOpenItem`, `empty` (shown with no messages), `renderMessage`, `renderInput` |
+| `ChatMessages` | the thread alone, in a box of its own that scrolls (give it a height, or a flex parent): `messages`, `loading`, `onOpenItem`, `empty`, `renderMessage` |
+| `ChatInput` | the input alone: `onSubmit(text)`; optional `prompt` + `onPromptChange` or `defaultValue`, `disabled`, `onStop`, `stopping`. Enter sends, Shift+Enter is a new line |
 | `ItemMessage` | one item line: `message`, `onOpen` |
 | `ChatModal` | a modal shell for an opened item: `open`, `title`, `onClose`, `children`. Escape or the backdrop closes it |
 

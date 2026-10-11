@@ -1,6 +1,7 @@
 /** A part of the thread a host can add its own class to. */
 export type ChatPart =
   | 'root'
+  | 'messages'
   | 'viewport'
   | 'thread'
   | 'empty'
@@ -11,6 +12,7 @@ export type ChatPart =
   | 'cursor'
   | 'actions'
   | 'loading'
+  | 'jumpButton'
   | 'item'
   | 'itemIcon'
   | 'itemLabel'

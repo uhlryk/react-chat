@@ -6,6 +6,30 @@ All notable changes to `@krzysztofsztompka/react-chat`. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- The input can hold its own text: leave out `prompt`, optionally give
+  `defaultValue`, and `onSubmit(text)` gets the text while the input empties
+  itself. The controlled form (`prompt` + `onPromptChange`) stays.
+- `onSubmit` gets the text in both forms.
+- Autoscroll follows the end only while the reader is there. A reader who
+  scrolled up stays put and gets a "Jump to latest" button (`labels.jumpToLatest`,
+  part `jumpButton`). The person's own new message brings them back down. Content
+  that grows by itself (an image loading) is followed too.
+- The thread is `role="log"` with `aria-live="polite"`, and `aria-busy` while a
+  reply is streaming or loading.
+- An item line's accessible name is its label, status and summary as separate words.
+- `ChatModal` moves focus in, keeps Tab inside, returns focus to the opener on
+  close, and is labelled by its title.
+- Tests in a DOM (happy-dom): scrolling, the uncontrolled input, the modal's focus.
+
+### Changed
+
+- **Breaking:** `ChatMessages` is its own scrolling box: a `messages` wrapper
+  (`react-chat__messages`) holds the `viewport` and the jump button. Used alone,
+  it needs a height or a flex parent. `Chat` looks the same.
+- `prompt` and `onPromptChange` are optional on `Chat` and `ChatInput`.
+
 ## [0.3.0] - 2026-10-11
 
 ### Added

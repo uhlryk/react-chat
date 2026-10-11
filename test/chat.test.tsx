@@ -201,6 +201,7 @@ test('labels replace every string, and no English default is left', () => {
     placeholder: 'Zadaj pytanie',
     close: 'Zamknij',
     loading: 'czekam',
+    jumpToLatest: 'Do najnowszych',
   };
   const props = { prompt: 'x', onPromptChange: noop, onSubmit: noop, labels };
   const out = [
@@ -215,7 +216,10 @@ test('labels replace every string, and no English default is left', () => {
       </ChatModal>,
     ),
   ].join('');
-  for (const text of Object.values(labels)) assert.ok(out.includes(text), `${text} is shown`);
+  // jumpToLatest shows only once the reader has scrolled up: dom.test.tsx covers it
+  for (const text of Object.values({ ...labels, jumpToLatest: undefined }).filter(Boolean)) {
+    assert.ok(out.includes(text as string), `${text} is shown`);
+  }
   for (const text of Object.values(defaultChatLabels)) {
     assert.ok(!out.includes(text), `the default ${JSON.stringify(text)} is left`);
   }
@@ -225,4 +229,22 @@ test('a partial labels object keeps the English defaults for the rest', () => {
   const out = html(<ChatInput prompt="" onPromptChange={noop} onSubmit={noop} labels={{ send: 'Go' }} />);
   assert.match(out, />Go</);
   assert.match(out, /placeholder="Ask a question…"/);
+});
+
+test('the thread is a polite live log, busy while a reply is still arriving', () => {
+  const settled = html(<ChatMessages messages={[{ id: '1', kind: 'assistant', content: 'done' }]} />);
+  assert.match(settled, /role="log" aria-live="polite" class="react-chat__thread"/);
+  const arriving = html(<ChatMessages messages={[{ id: '1', kind: 'assistant', content: 'do', streaming: true }]} />);
+  assert.match(arriving, /role="log" aria-live="polite" aria-busy="true"/);
+  assert.match(html(<ChatMessages messages={[]} loading />), /aria-busy="true"/);
+});
+
+test('an item is named by its label, status and summary, each its own word', () => {
+  const out = html(
+    <ItemMessage message={{ id: 'i', kind: 'item', label: 'prices', status: { text: 'ok' }, summary: '3 rows' }} />,
+  );
+  const ids = out.match(/aria-labelledby="([^"]*)"/)?.[1].split(' ') ?? [];
+  assert.equal(ids.length, 3);
+  const texts = ids.map((id) => out.match(new RegExp(`id="${id}"[^>]*>([^<]*)<`))?.[1]);
+  assert.deepEqual(texts, ['prices', 'ok', '3 rows']);
 });

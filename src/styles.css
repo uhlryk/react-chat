@@ -9,7 +9,9 @@
 
 :where(
   .react-chat,
+  .react-chat__messages,
   .react-chat__viewport,
+  .react-chat__jump,
   .react-chat__thread,
   .react-chat__empty,
   .react-chat__row,
@@ -40,6 +42,14 @@
   color: var(--react-chat-text, #111827);
 }
 
+:where(.react-chat__messages) {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0%;
+  min-height: 0;
+}
+
 :where(.react-chat__viewport) {
   flex: 1 1 0%;
   min-height: 0;
@@ -52,6 +62,30 @@
   gap: var(--react-chat-gap, 0.75rem);
   width: 100%;
   padding: var(--react-chat-padding, 0.75rem);
+}
+
+:where(.react-chat__thread:empty) {
+  padding: 0;
+}
+
+/* shown once the reader has scrolled up; brings them back to the newest message */
+:where(.react-chat__jump) {
+  position: absolute;
+  bottom: 0.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 1px solid var(--react-chat-border, #d1d5db);
+  border-radius: 9999px;
+  background-color: var(--react-chat-surface, #ffffff);
+  padding: 0.25rem 0.75rem;
+  font-family: inherit;
+  font-size: 0.75rem;
+  line-height: calc(1 / 0.75);
+  color: var(--react-chat-text, #111827);
+  box-shadow:
+    0 4px 6px -1px rgb(0 0 0 / 0.1),
+    0 2px 4px -2px rgb(0 0 0 / 0.1);
+  cursor: pointer;
 }
 
 :where(.react-chat__empty) {
@@ -317,6 +351,10 @@
   box-shadow:
     0 20px 25px -5px rgb(0 0 0 / 0.1),
     0 8px 10px -6px rgb(0 0 0 / 0.1);
+}
+
+:where(.react-chat__modal:focus) {
+  outline: none;
 }
 
 :where(.react-chat__modal-header) {

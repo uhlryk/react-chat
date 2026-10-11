@@ -8,9 +8,13 @@ import type { ChatItem, ChatMessage } from './types.js';
 export interface ChatProps extends ChatStyling {
   messages: ChatMessage[];
   loading?: boolean;
-  prompt: string;
-  onPromptChange: (value: string) => void;
-  onSubmit: () => void;
+  /** The input's text when the host holds it; leave it out for an input that holds its own. */
+  prompt?: string;
+  onPromptChange?: (value: string) => void;
+  /** The text an input that holds its own starts with. */
+  defaultValue?: string;
+  /** The person sends `text`. */
+  onSubmit: (text: string) => void;
   /** Disables sending (a reply in flight). */
   busy?: boolean;
   onOpenItem?: (message: ChatItem) => void;
@@ -32,6 +36,7 @@ export function Chat({
   loading,
   prompt,
   onPromptChange,
+  defaultValue,
   onSubmit,
   busy,
   onOpenItem,
@@ -46,6 +51,7 @@ export function Chat({
   const input: ChatInputProps = {
     prompt,
     onPromptChange,
+    defaultValue,
     onSubmit,
     disabled: busy,
     onStop,
@@ -55,17 +61,15 @@ export function Chat({
   };
   return (
     <div className={cls(styling, 'root', 'react-chat')}>
-      <div className={cls(styling, 'viewport', 'react-chat__viewport')}>
-        <ChatMessages
-          messages={messages}
-          loading={loading}
-          onOpenItem={onOpenItem}
-          empty={empty}
-          renderMessage={renderMessage}
-          labels={labels}
-          {...styling}
-        />
-      </div>
+      <ChatMessages
+        messages={messages}
+        loading={loading}
+        onOpenItem={onOpenItem}
+        empty={empty}
+        renderMessage={renderMessage}
+        labels={labels}
+        {...styling}
+      />
       {renderInput ? renderInput(input) : <ChatInput {...input} />}
     </div>
   );

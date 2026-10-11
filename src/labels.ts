@@ -12,6 +12,8 @@ export interface ChatLabels {
   close: string;
   /** The waiting marker after the last message. */
   loading: string;
+  /** The control that scrolls back to the newest message, shown once the reader has scrolled up. */
+  jumpToLatest: string;
 }
 
 export const defaultChatLabels: Readonly<ChatLabels> = {
@@ -21,6 +23,7 @@ export const defaultChatLabels: Readonly<ChatLabels> = {
   placeholder: 'Ask a question…',
   close: 'Close',
   loading: '…',
+  jumpToLatest: 'Jump to latest',
 };
 
 /** The host's labels over the English defaults. */
