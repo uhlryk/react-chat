@@ -1,11 +1,69 @@
 {
   "name": "@krzysztofsztompka/react-chat",
-  "version": "0.0.0",
-  "private": true,
-  "description": "A chat thread for React: user / assistant / tool messages and an input, no transport",
+  "version": "0.1.0",
+  "description": "A chat thread for React — questions, answers, item lines and cards over whatever store and transport the host has",
+  "keywords": [
+    "react",
+    "chat",
+    "chat-ui",
+    "thread",
+    "conversation",
+    "component"
+  ],
+  "author": "Krzysztof Sztompka",
   "license": "MIT",
-  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uhlryk/react-chat.git"
+  },
+  "homepage": "https://github.com/uhlryk/react-chat#readme",
+  "bugs": "https://github.com/uhlryk/react-chat/issues",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/cjs/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "rm -rf dist && tsc -p tsconfig.json && tsc -p tsconfig.esm.json && node build/finish.mjs",
+    "typecheck": "tsc -p tsconfig.test.json --noEmit",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "test": "rm -rf dist-test && tsc -p tsconfig.test.json && node --test dist-test/test/chat.test.js",
+    "prepack": "npm run build",
+    "prepublishOnly": "npm test"
+  },
   "peerDependencies": {
     "react": "^18.3.1 || ^19.0.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.15",
+    "@types/node": "^22.10.7",
+    "@types/react": "^19.1.13",
+    "@types/react-dom": "^19.1.9",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "typescript": "~5.8.3"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
