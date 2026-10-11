@@ -6,6 +6,8 @@ All notable changes to `@krzysztofsztompka/react-chat`. The format follows
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-10-11
+
 ### Added
 
 - The input can hold its own text: leave out `prompt`, optionally give
@@ -85,7 +87,8 @@ All notable changes to `@krzysztofsztompka/react-chat`. The format follows
 - Every colour as a `--react-chat-*` CSS variable with a light default.
 - ES modules and CommonJS, with types.
 
-[Unreleased]: https://github.com/uhlryk/react-chat/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/uhlryk/react-chat/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/uhlryk/react-chat/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/uhlryk/react-chat/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/uhlryk/react-chat/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/uhlryk/react-chat/releases/tag/v0.1.0
