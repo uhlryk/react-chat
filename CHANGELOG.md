@@ -6,6 +6,32 @@ All notable changes to `@krzysztofsztompka/react-chat`. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- A stylesheet of its own, `@krzysztofsztompka/react-chat/styles.css`, with every
+  rule in `:where()`. Tailwind is no longer needed.
+- `classNames` on every component: a host class per part, appended to the default.
+- `renderMessage(message, defaultRender)` and `renderInput(props)` replace a part.
+- `unstyled`: no default classes at all. `data-kind`, `data-tone` and
+  `data-variant` stay for the host to style by.
+- Variables for size and space: `--react-chat-font-size`, `-line-height`,
+  `-font-mono`, `-gap`, `-padding`, `-indent`, `-radius`, `-bubble-radius`,
+  `-item-radius`, `-button-radius`, `-placeholder`, `-backdrop`, `-modal-width`,
+  `-modal-z`.
+- The props types are exported, as are `ChatClassNames`, `ChatPart` and `ChatStyling`.
+- `example/`: a page with no build step and no Tailwind.
+
+### Changed
+
+- **Breaking:** the components carry `react-chat__*` classes instead of Tailwind
+  classes. A host that used `@source` imports `styles.css` instead. The variable
+  names and the `react-chat__item--{variant}` / `react-chat__card--{variant}`
+  classes are unchanged.
+- The thread's root sets `color: var(--react-chat-text)`, so the host's nodes
+  inside follow the theme.
+- The streaming cursor and the waiting marker stop pulsing under
+  `prefers-reduced-motion`. The cursor is `aria-hidden`.
+
 ## [0.1.0] - 2026-10-11
 
 ### Added

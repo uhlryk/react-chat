@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>react-chat example</title>
+    <!-- From the repository root: npm run build && npx http-server . — then open /example/ -->
+    <link rel="stylesheet" href="../dist/styles.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "react": "https://esm.sh/react@19.1.1",
+          "react/jsx-runtime": "https://esm.sh/react@19.1.1/jsx-runtime",
+          "react-dom/client": "https://esm.sh/react-dom@19.1.1/client",
+          "@krzysztofsztompka/react-chat": "../dist/esm/index.js"
+        }
+      }
+    </script>
+    <style>
+      body { margin: 0; font-family: system-ui, sans-serif; display: flex; gap: 16px; padding: 16px; background: #e5e7eb; }
+      [data-demo] { flex: 1; height: calc(100vh - 32px); border-radius: 8px; overflow: hidden; background: #fff; }
+      /* a variant's own colours */
+      .react-chat__item--nested { --react-chat-item-bg: #eff6ff; --react-chat-item-border: #bfdbfe; --react-chat-item-text: #1e3a8a; }
+      /* a dark theme is only variables */
+      .dark {
+        background: #111827;
+        --react-chat-text: #f3f4f6; --react-chat-muted: #9ca3af; --react-chat-border: #374151;
+        --react-chat-surface: #111827; --react-chat-input-bg: #1f2937;
+        --react-chat-user-bg: #14532d; --react-chat-assistant-bg: #1e3a8a;
+        --react-chat-item-bg: #2e1065; --react-chat-item-border: #5b21b6; --react-chat-item-text: #ddd6fe;
+        --react-chat-card-bg: #451a03; --react-chat-card-border: #b45309;
+        --react-chat-tone-neutral: #9ca3af; --react-chat-tone-progress: #fbbf24; --react-chat-tone-ok: #34d399;
+        --react-chat-tone-warn: #fbbf24; --react-chat-tone-bad: #f87171;
+      }
+      .dark .react-chat__item--nested { --react-chat-item-bg: #172554; --react-chat-item-border: #1e40af; --react-chat-item-text: #bfdbfe; }
+    </style>
+  </head>
+  <body>
+    <div data-demo></div>
+    <div data-demo class="dark"></div>
+    <script type="module" src="./demo.js"></script>
+  </body>
+</html>

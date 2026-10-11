@@ -1,4 +1,6 @@
-interface ChatInputProps {
+import { type ChatStyling, cls } from './classes.js';
+
+export interface ChatInputProps extends ChatStyling {
   prompt: string;
   onPromptChange: (value: string) => void;
   onSubmit: () => void;
@@ -22,10 +24,11 @@ export function ChatInput({
   placeholder = 'Ask a question…',
   onStop,
   stopping = false,
+  ...styling
 }: ChatInputProps) {
   const canSend = !disabled && prompt.trim() !== '';
   return (
-    <div className="flex flex-row items-end gap-2 border-t border-[var(--react-chat-border,#d1d5db)] bg-[var(--react-chat-surface,#ffffff)] p-3">
+    <div className={cls(styling, 'input', 'react-chat__input')}>
       <textarea
         value={prompt}
         onChange={(event) => onPromptChange(event.target.value)}
@@ -37,14 +40,14 @@ export function ChatInput({
         }}
         rows={3}
         placeholder={placeholder}
-        className="block w-full resize-y rounded-lg border border-[var(--react-chat-border,#d1d5db)] bg-[var(--react-chat-input-bg,#f9fafb)] p-2.5 text-sm text-[var(--react-chat-text,#111827)] focus:border-[var(--react-chat-accent,#2563eb)] focus:outline-none"
+        className={cls(styling, 'textarea', 'react-chat__textarea')}
       />
       {disabled && onStop ? (
         <button
           type="button"
           onClick={onStop}
           disabled={stopping}
-          className="rounded border border-[var(--react-chat-tone-bad,#b91c1c)] px-4 py-2 text-sm text-[var(--react-chat-tone-bad,#b91c1c)] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+          className={cls(styling, ['button', 'stopButton'], 'react-chat__button', 'react-chat__button--stop')}
         >
           {stopping ? 'Stopping…' : 'Stop'}
         </button>
@@ -53,7 +56,7 @@ export function ChatInput({
           type="button"
           onClick={onSubmit}
           disabled={!canSend}
-          className="rounded bg-[var(--react-chat-accent,#2563eb)] px-4 py-2 text-sm text-[var(--react-chat-accent-text,#ffffff)] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+          className={cls(styling, ['button', 'sendButton'], 'react-chat__button', 'react-chat__button--send')}
         >
           Send
         </button>

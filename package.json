@@ -32,13 +32,16 @@
         "default": "./dist/cjs/index.js"
       }
     },
+    "./styles.css": "./dist/styles.css",
     "./package.json": "./package.json"
   },
   "files": [
     "dist",
     "src"
   ],
-  "sideEffects": false,
+  "sideEffects": [
+    "*.css"
+  ],
   "engines": {
     "node": ">=20"
   },

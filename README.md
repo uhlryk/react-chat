@@ -13,33 +13,52 @@ npm install @krzysztofsztompka/react-chat
 React 18.3+ or 19 is a peer dependency. ES modules and CommonJS are both shipped,
 with types.
 
-## Styling (0.x)
+## Styling
 
-The components carry [Tailwind CSS v4](https://tailwindcss.com) class names. Add the
-package to your Tailwind sources:
+The package ships a stylesheet. Import it once; neither the build nor the runtime
+needs Tailwind or any other CSS tool:
 
-```css
-@import 'tailwindcss';
-@source '../node_modules/@krzysztofsztompka/react-chat/dist/esm';
+```ts
+import '@krzysztofsztompka/react-chat/styles.css';
 ```
 
-A prebuilt stylesheet that does not need Tailwind is planned for a later 0.x release.
+Every rule sits in `:where()`, so it weighs nothing: one class of yours always
+wins. There are three ways in, from lightest to heaviest.
 
-Every colour is a CSS variable with a light default. Set them on any wrapper:
+### 1. CSS variables
 
-| variable | what it colours |
+Set them on any ancestor. The stylesheet only reads them, with a light default.
+
+| variable | what it sets |
 |---|---|
 | `--react-chat-text`, `--react-chat-muted` | text, secondary text |
 | `--react-chat-border`, `--react-chat-surface`, `--react-chat-input-bg` | lines, the input bar, the text area |
 | `--react-chat-user-bg`, `--react-chat-assistant-bg` | the two bubbles |
 | `--react-chat-item-bg`, `-item-border`, `-item-text` | an item line |
 | `--react-chat-card-bg`, `-card-border` | a card |
-| `--react-chat-accent`, `-accent-text` | the Send button, the focus ring |
+| `--react-chat-accent`, `-accent-text` | the Send button, the focus border |
 | `--react-chat-tone-neutral`, `-progress`, `-ok`, `-warn`, `-bad` | an item's status (`-bad` also colours Stop) |
+| `--react-chat-placeholder`, `--react-chat-backdrop` | the placeholder text, the modal's backdrop |
+| `--react-chat-font-size`, `--react-chat-line-height`, `--react-chat-font-mono` | text size, line height, the item lines' font |
+| `--react-chat-gap`, `--react-chat-padding`, `--react-chat-indent` | space between messages, around the thread and the input, the side left free opposite a message |
+| `--react-chat-radius`, `-bubble-radius`, `-item-radius`, `-button-radius` | corners: cards, the text area and the modal; bubbles; item lines; buttons |
+| `--react-chat-modal-width`, `--react-chat-modal-z` | the modal's maximum width, its z-index |
 
-An item and a card with a `variant` also get the class `react-chat__item--{variant}` /
-`react-chat__card--{variant}`. Set the variables on that class to give a variant its
-own colours:
+A dark theme is just these variables under your own dark selector:
+
+```css
+.dark {
+  --react-chat-text: #f3f4f6;
+  --react-chat-border: #374151;
+  --react-chat-surface: #111827;
+  --react-chat-assistant-bg: #1e3a8a;
+  /* … */
+}
+```
+
+An item or a card with a `variant` also gets the class `react-chat__item--{variant}`
+or `react-chat__card--{variant}`, plus `data-variant`. Set the variables there to
+give a variant its own colours:
 
 ```css
 .react-chat__item--nested {
@@ -48,6 +67,45 @@ own colours:
   --react-chat-item-text: #1e3a8a;
 }
 ```
+
+### 2. `classNames`
+
+Every component takes `classNames`, one class per part, appended to the default.
+It works with any class-based tool, for example Tailwind or CSS modules:
+
+```tsx
+<Chat {...props} classNames={{ userMessage: 'my-bubble', sendButton: 'my-send' }} />
+```
+
+The parts are `root`, `viewport`, `thread`, `empty`, `row`, `message`,
+`userMessage`, `assistantMessage`, `cursor`, `actions`, `loading`, `item`,
+`itemIcon`, `itemLabel`, `itemStatus`, `itemSummary`, `card`, `input`,
+`textarea`, `button`, `sendButton`, `stopButton`, and for `ChatModal`:
+`backdrop`, `modal`, `modalHeader`, `modalTitle`, `modalClose`, `modalBody`.
+
+### 3. Render overrides
+
+`renderMessage(message, defaultRender)` renders a message in place of the
+package. Call `defaultRender(message)` for the kinds you do not change.
+`renderInput(props)` replaces the input and gets what `ChatInput` would get.
+
+```tsx
+<Chat
+  {...props}
+  renderMessage={(m, defaultRender) => (m.kind === 'card' ? <MyCard>{m.content}</MyCard> : defaultRender(m))}
+  renderInput={(p) => <MyComposer value={p.prompt} onChange={p.onPromptChange} onSend={p.onSubmit} />}
+/>
+```
+
+### `unstyled`
+
+`unstyled` drops every default class, so only your `classNames` remain. Rows,
+statuses and variants keep `data-kind`, `data-tone` and `data-variant` for you to
+style by. Leave the stylesheet out in that case.
+
+[`example/`](example/) is a page with no build step and no Tailwind. It shows a
+light and a dark thread: run `npm run build && npx http-server .` and open
+`/example/`.
 
 ## Use
 
@@ -106,11 +164,14 @@ type ItemTone = 'neutral' | 'progress' | 'ok' | 'warn' | 'bad';
 
 | component | props |
 |---|---|
-| `Chat` | `messages`, `prompt`, `onPromptChange`, `onSubmit`; optional `busy` (no sending), `onStop` + `stopping` (the button becomes Stop while busy), `loading` (a waiting marker after the last message), `onOpenItem`, `empty` (shown with no messages), `placeholder` |
-| `ChatMessages` | the thread alone: `messages`, `loading`, `onOpenItem`, `empty` |
+| `Chat` | `messages`, `prompt`, `onPromptChange`, `onSubmit`; optional `busy` (no sending), `onStop` + `stopping` (the button becomes Stop while busy), `loading` (a waiting marker after the last message), `onOpenItem`, `empty` (shown with no messages), `placeholder`, `renderMessage`, `renderInput` |
+| `ChatMessages` | the thread alone: `messages`, `loading`, `onOpenItem`, `empty`, `renderMessage` |
 | `ChatInput` | the input alone: `prompt`, `onPromptChange`, `onSubmit`, `disabled`, `placeholder`, `onStop`, `stopping`. Enter sends, Shift+Enter is a new line |
 | `ItemMessage` | one item line: `message`, `onOpen` |
 | `ChatModal` | a modal shell for an opened item: `open`, `title`, `onClose`, `children`. Escape or the backdrop closes it |
+
+Every component also takes `classNames` and `unstyled`. The props types are
+exported (`ChatProps`, `ChatInputProps`, …), as are `ChatClassNames` and `ChatPart`.
 
 ## License
 
